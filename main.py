@@ -1,7 +1,7 @@
 import os
 import datetime
 from fastapi import FastAPI, Request, HTTPException, Header
-from fastapi.responses import PlainTextResponse, StreamingResponse
+from fastapi.responses import PlainTextResponse, StreamingResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -22,7 +22,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/form", StaticFiles(directory="static/form", html=True), name="form")
+app.mount("/scorecard", StaticFiles(directory="static/scorecard", html=True), name="scorecard")
+app.mount("/form-legacy", StaticFiles(directory="static/form", html=True), name="form_legacy")
+
+
+@app.get("/form")
+@app.get("/form/")
+def form_redirect():
+    return RedirectResponse(url="/scorecard/", status_code=307)
 
 
 @app.on_event("startup")
