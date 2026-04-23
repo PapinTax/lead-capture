@@ -33,8 +33,10 @@ def send_results_email(
             "html": html_body,
         }
 
+        from_addr = params["from"]
         bcc = os.environ.get("BCC_EMAIL", "")
-        if bcc:
+        # Resend test domain only allows single recipient; skip BCC
+        if bcc and "resend.dev" not in from_addr:
             params["bcc"] = [bcc]
 
         resend.Emails.send(params)
